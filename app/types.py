@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 
+
 class GrantParams(BaseModel):
     delegating_pk: str
     receiving_pk: str
     verifying_key: str
     capsule: str
     kfrag: str
+
 
 class AccessParams(BaseModel):
     delegating_pk: str
@@ -16,3 +18,12 @@ class AccessParams(BaseModel):
 class AccessResponse(BaseModel):
     capsule: str
     cfrag: str
+
+
+class RequestParams(BaseModel):
+    address: str
+    publicKey: str
+
+
+class GetPubKeyParams(BaseModel):
+    address: str

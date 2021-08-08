@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.pre import reencrypt_hex
-from app.types import AccessParams, AccessResponse, GrantParams
+from app.types import AccessParams, AccessResponse, GetPubKeyParams, GrantParams, RequestParams
 
 app = FastAPI()
 store = SqliteStorage()
@@ -39,3 +39,18 @@ def cfrags(params: AccessParams):
         raise HTTPException(status_code=400, detail="cfrag not found")
     cfrag, capsule = res
     return AccessResponse(capsule=capsule, cfrag=cfrag)
+
+
+@app.post("/v1/requestAccess")
+def requestAccess(params: RequestParams):
+    store.addRequest(params.address, params.publicKey)
+    return True
+
+
+@app.post("/v1/getPublicKey")
+def getPublicKey(params: GetPubKeyParams):
+    res = store.getPubKey(params.address)
+    if res is None:
+        raise HTTPException(status_code=400, detail="address not found")
+    pubkey = res
+    return {"pubkey": pubkey}
